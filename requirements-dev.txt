@@ -4,10 +4,10 @@
 flask-shell-ipython==0.3.1
 flask-pytest==0.0.5
 flake8==3.6.0
-
-
+pytest-cov==2.6.0
 
 #Dependencias das dependencias
+coverage==4.5.1
 backcall==0.1.0
 decorator==4.3.0
 ipython==7.1.1

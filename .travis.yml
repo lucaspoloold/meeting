@@ -5,4 +5,6 @@ install:
   - pip install -r requirements-dev.txt codecov
 script:
   - flake8
-  - py.test meeting/tests -s -v
+  - pytest meeting/tests --cov=meeting
+after_success:
+  - codecov
