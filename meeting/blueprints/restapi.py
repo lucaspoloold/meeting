@@ -10,7 +10,7 @@ sala_post_parser.add_argument('nome', required=True)
 sala_post_parser.add_argument('capacidade', required=True)
 
 
-class Sala(Resource):
+class SalaList(Resource):
     def get(self):
         return {'salas': list(app.db['salas'].find())}
 
@@ -20,6 +20,16 @@ class Sala(Resource):
         return {'sala criada': nova_sala.inserted_id}, 201
 
 
+class Sala(Resource):
+
+    def put(self, sala_id):
+        sala = sala_post_parser.parse_args()
+        app.db['salas'].update_one({'_id': sala_id}, {"$set": sala})
+
+        return {'sala atualizada': sala_id}, 200
+
+
 def configure(app):
-    api.add_resource(Sala, '/sala/')
+    api.add_resource(SalaList, '/sala/')
+    api.add_resource(Sala, '/sala/<sala_id>')
     app.register_blueprint(bp)
