@@ -1,4 +1,4 @@
-def test_404(app):
+def test_get_salas(app):
     with app.test_client() as client:
-        result = client.get('/')
-        assert result.status_code == 404
+        result = client.get('/api/sala/')
+        assert result.status_code == 200

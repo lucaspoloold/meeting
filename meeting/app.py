@@ -1,5 +1,6 @@
 from flask import Flask
 from meeting.ext import db
+from meeting.blueprints import restapi
 
 
 def create_app():
@@ -9,4 +10,7 @@ def create_app():
 
     # Extensão para o banco de dados
     db.configure(app)
+
+    # Blueprint da API
+    restapi.configure(app)
     return app
