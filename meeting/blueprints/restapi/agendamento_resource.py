@@ -13,6 +13,7 @@ agendamento_post_parser.add_argument('fim', required=True)
 class AgendamentoList(Resource):
 
     def get(self):
+        app.logger.info("Buscando todos os agendamentos")
         return {'agendamentos': list(app.db['agendamentos'].find())}
 
     def post(self):
@@ -20,7 +21,9 @@ class AgendamentoList(Resource):
         try:
             valida_agendamento(app.db, agendamento)
         except Exception as e:
+            app.logger.info(f"Agendamento inválido: {e} - Request {agendamento}")
             return {"Agendamento inválido": str(e)}, 409
         else:
             agendamento_novo = app.db['agendamentos'].insert(agendamento)
+            app.logger.info(f"Agendamento {agendamento} criado com sucesso: {agendamento_novo.inserted_id}")
             return {"agendamento criado": agendamento_novo.inserted_id}, 201
