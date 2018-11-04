@@ -1,9 +1,5 @@
-from flask import Blueprint
 from flask import current_app as app
-from flask_restful import Api, Resource, reqparse
-
-bp = Blueprint('restapi', __name__, url_prefix='/api')
-api = Api(bp)
+from flask_restful import reqparse, Resource
 
 sala_post_parser = reqparse.RequestParser()
 sala_post_parser.add_argument('nome', required=True)
@@ -27,9 +23,3 @@ class Sala(Resource):
         app.db['salas'].update_one({'_id': sala_id}, {"$set": sala})
 
         return {'sala atualizada': sala_id}, 200
-
-
-def configure(app):
-    api.add_resource(SalaList, '/sala/')
-    api.add_resource(Sala, '/sala/<sala_id>')
-    app.register_blueprint(bp)
