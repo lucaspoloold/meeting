@@ -18,7 +18,6 @@ def test_inserir_sala(app):
 
 def test_atualizar_sala_existente(app):
     registro = app.db['salas'].find_one({})
-    print("== ", registro['_id'], " ", registro['capacidade'])
     with app.test_client() as client:
         updated = client.put(f"api/sala/{registro['_id']}", json={
             'nome': registro['nome'],
