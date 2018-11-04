@@ -23,3 +23,8 @@ class Sala(Resource):
         app.db['salas'].update_one({'_id': sala_id}, {"$set": sala})
 
         return {'sala atualizada': sala_id}, 200
+
+    def delete(self, sala_id):
+        app.db['salas'].delete_one({'_id': sala_id})
+
+        return {'sala excluida': sala_id}, 200
