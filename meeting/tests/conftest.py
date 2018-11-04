@@ -9,8 +9,8 @@ def app():
     app_obj.db['salas'].delete_many({})
     app_obj.db['agendamentos'].delete_many({})
 
-    app_obj.db['salas'].insert_one({'nome': 'Turing', 'capacidade': 20})
-    sala = app_obj.db['salas'].insert({'nome': 'Ramalho', 'capacidade': 15})
+    app_obj.db['salas'].insert_one({'nome': 'Turing', 'capacidade': 20, 'ativa': True})
+    sala = app_obj.db['salas'].insert({'nome': 'Ramalho', 'capacidade': 15, 'ativa': True})
 
     agendamento = {
         'titulo': 'Daily meeting',
