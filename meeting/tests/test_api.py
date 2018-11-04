@@ -28,3 +28,12 @@ def test_atualizar_sala_existente(app):
 
         assert updated.status_code == 200
         assert registro_atualizado['capacidade'] == '40'
+
+
+def test_apagar_sala(app):
+    registro = app.db['salas'].find_one({})
+    with app.test_client() as client:
+        deleted = client.delete(f"api/sala/{registro['_id']}")
+
+        assert deleted.status_code == 200
+        assert not app.db['salas'].find_one({'_id': registro['_id']})
