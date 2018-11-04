@@ -4,6 +4,7 @@ from flask_restful import reqparse, Resource
 sala_post_parser = reqparse.RequestParser()
 sala_post_parser.add_argument('nome', required=True)
 sala_post_parser.add_argument('capacidade', required=True)
+sala_post_parser.add_argument('ativa')
 
 
 class SalaList(Resource):
@@ -12,7 +13,11 @@ class SalaList(Resource):
 
     def post(self):
         sala = sala_post_parser.parse_args()
-        nova_sala = app.db['salas'].insert({'nome': sala.nome, 'capacidade': sala.capacidade})
+        nova_sala = app.db['salas'].insert({
+            'nome': sala.nome,
+            'capacidade': sala.capacidade,
+            'ativa': True
+        })
         return {'sala criada': nova_sala.inserted_id}, 201
 
 
@@ -25,6 +30,7 @@ class Sala(Resource):
         return {'sala atualizada': sala_id}, 200
 
     def delete(self, sala_id):
-        app.db['salas'].delete_one({'_id': sala_id})
+        '''Irá excluir a sala de maneira lógica'''
+        app.db['salas'].update_one({'_id': sala_id}, {"$set": {"ativa": False}})
 
         return {'sala excluida': sala_id}, 200

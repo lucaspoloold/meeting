@@ -36,4 +36,5 @@ def test_apagar_sala(app):
         deleted = client.delete(f"api/sala/{registro['_id']}")
 
         assert deleted.status_code == 200
-        assert not app.db['salas'].find_one({'_id': registro['_id']})
+        sala_excluida = app.db['salas'].find_one({'_id': registro['_id']})
+        assert not sala_excluida['ativa']
