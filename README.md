@@ -8,6 +8,8 @@ Sistema de reserva de salas para reuniões contando com as seguintes funcionalid
 - API de Salas
 - API de Reuniões (Agendamentos das Salas)
 
+O projeto conta com um processo de integração contínua para rodar automaticamente o linter e os testes, como pode ser visto no primeiro badge. No segundo badge é possível ver a cobertura de testes.
+
 ## Instalação do Projeto
 
 Para instalar o projeto faça um clone do mesmo em sua área, com o comando:
@@ -188,6 +190,28 @@ JSON:
     "inicio": "2018-12-02T08:00:00",
     "sala_id": "46a1e0e1e11711e8b7ca1c394760687f",
     "titulo": "Fechamento mensal"
+}
+```
+
+Se necessário filtrar o agendamento, basta mandar um JSON no body da requisição contendo `data` e/ou `sala_id`:
+
+```bash
+http --json --form GET localhost:5000/api/agendamento/ data=2018-12-02T08:10 sala_id=4830e432e12711e8b7ca1c394760687f
+```
+
+Retorno:
+
+```json
+{
+    "agendamentos": [
+        {
+            "_id": "4830e436e12711e8b7ca1c394760687f",
+            "fim": "2018-12-02T08:10:00",
+            "inicio": "2018-12-02T08:00:00",
+            "sala_id": "4830e432e12711e8b7ca1c394760687f",
+            "titulo": "Weekly meeting"
+        }
+    ]
 }
 ```
 
