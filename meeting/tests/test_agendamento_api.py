@@ -4,6 +4,15 @@ def test_recuperar_agendamentos(app):
         assert agendamentos.status_code == 200
 
 
+def test_recuperar_agendamento(app):
+    agendamento = app.db['agendamentos'].find_one({})
+
+    with app.test_client() as client:
+        agd = client.get(f'api/agendamento/{agendamento["_id"]}')
+        assert agd.status_code == 200
+        assert agd.json['_id'] == agendamento["_id"]
+
+
 def test_inserir_agendamento(app):
     sala = app.db['salas'].find_one({"ativa": True})
     agendamento = {
@@ -90,3 +99,11 @@ def test_inserir_agendamento_com_data_invalida(app):
         novo_agendamento = client.post('api/agendamento/', json=agendamento)
         assert novo_agendamento.status_code == 409
         assert "invalido" in novo_agendamento.json['Agendamento inválido']
+
+
+def test_apagar_agendamento(app):
+    agendamento = app.db['agendamentos'].find_one({})
+    with app.test_client() as client:
+        excluido = client.delete(f'/api/agendamento/{agendamento["_id"]}')
+        assert excluido.status_code == 200
+        assert not app.db['agendamentos'].find_one({'_id': agendamento['_id']})
