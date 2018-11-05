@@ -4,6 +4,35 @@ def test_recuperar_agendamentos(app):
         assert agendamentos.status_code == 200
 
 
+def test_filtrar_agendamento(app):
+    agendamento = app.db['agendamentos'].find_one({})
+
+    with app.test_client() as client:
+        filtro = {
+            'data': agendamento['inicio'],
+        }
+
+        resultado = client.get('api/agendamento/', json=filtro)
+        assert resultado.status_code == 200
+        assert bool(resultado.json)
+
+        filtro = {
+            'sala_id': agendamento['sala_id'],
+        }
+
+        resultado = client.get('api/agendamento/', json=filtro)
+        assert resultado.status_code == 200
+        assert bool(resultado.json)
+
+        filtro = {
+            'sala_id': '123',
+        }
+
+        resultado = client.get('api/agendamento/', json=filtro)
+        assert resultado.status_code == 404
+        assert bool(resultado.json)
+
+
 def test_recuperar_agendamento(app):
     agendamento = app.db['agendamentos'].find_one({})
 
