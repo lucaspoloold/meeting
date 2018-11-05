@@ -12,6 +12,9 @@ def test_recuperar_agendamento(app):
         assert agd.status_code == 200
         assert agd.json['_id'] == agendamento["_id"]
 
+        agd = client.get('api/agendamento/321')
+        assert agd.status_code == 404
+
 
 def test_inserir_agendamento(app):
     sala = app.db['salas'].find_one({"ativa": True})
