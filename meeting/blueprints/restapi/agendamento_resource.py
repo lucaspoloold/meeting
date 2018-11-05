@@ -1,7 +1,7 @@
 from flask import current_app as app
 from flask_restful import Resource, reqparse
 
-from meeting.utils.agendamento_utils import valida_agendamento
+from meeting.utils.agendamento_utils import valida_agendamento, busca_agendamentos
 
 agendamento_post_parser = reqparse.RequestParser()
 agendamento_post_parser.add_argument('titulo', required=True)
@@ -9,12 +9,23 @@ agendamento_post_parser.add_argument('sala_id', required=True)
 agendamento_post_parser.add_argument('inicio', required=True)
 agendamento_post_parser.add_argument('fim', required=True)
 
+agendamento_query_parser = reqparse.RequestParser()
+agendamento_query_parser.add_argument('data', required=False)
+agendamento_query_parser.add_argument('sala_id', required=False)
+
 
 class AgendamentoList(Resource):
 
     def get(self):
-        app.logger.info("Buscando todos os agendamentos")
-        return {'agendamentos': list(app.db['agendamentos'].find())}
+        filtros = agendamento_query_parser.parse_args()
+        agendamentos = busca_agendamentos(app.db, filtros['data'], filtros['sala_id'])
+
+        if bool(agendamentos):
+            app.logger.info(f"Agendamentos: {agendamentos}")
+            return {"agendamentos": agendamentos}
+        else:
+            app.logger.info("Nenhum resultado encontrado")
+            return "Nenhum resultado encontrado", 404
 
     def post(self):
         agendamento = agendamento_post_parser.parse_args()

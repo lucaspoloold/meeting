@@ -33,3 +33,18 @@ def valida_agendamento(db, agendamento, agendamento_id=""):
 
     valida_sala_livre(db, agendamento['sala_id'], agendamento['inicio'], agendamento_id)
     valida_sala_livre(db, agendamento['sala_id'], agendamento['fim'], agendamento_id)
+
+
+def busca_agendamentos(db, data, sala_id):
+    filtros = {}
+
+    if data:
+        filtros = {
+            "inicio": {"$lte": data},
+            "fim": {"$gte": data}
+        }
+
+    if sala_id:
+        filtros["sala_id"] = sala_id
+
+    return list(db['agendamentos'].find(filtros))
