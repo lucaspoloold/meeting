@@ -13,17 +13,17 @@ Sistema de reserva de salas para reuniões contando com as seguintes funcionalid
 Para instalar o projeto faça um clone do mesmo em sua área, com o comando:
 
 ```bash
-git clone git@github.com:lucaspolo/meeting.git
+$ git clone git@github.com:lucaspolo/meeting.git
 ```
 
 Depois crie um virtualenv dentro da sua área, o ative e instale as dependências:
 
 ```bash
-cd meeting
-python3.6 -m venv .venv
-./venvbin/activate
+$ cd meeting
+$ python3.6 -m venv .venv
+$ ./venvbin/activate
 
-pip install -r requirements-dev.txt
+$ pip install -r requirements-dev.txt
 ```
 
 Com isto o projeto estará instalado e pronto para ser executado e alterado.
@@ -42,7 +42,7 @@ FLASK_ENV=development
 Como primeira etapa, executaremos os testes do projeto, que serão executados da seguinte forma:
 
 ```bash
-pytest meeting/tests --cov=meeting
+$ pytest meeting/tests --cov=meeting
 ```
 
 Os testes serão executados e também será gerado um relatório de cobertura.
@@ -52,7 +52,7 @@ Os testes serão executados e também será gerado um relatório de cobertura.
 Para executar a aplicação, basta executar o comando:
 
 ```bash
-flask run
+$ flask run
 ```
 
 Com isto a aplicação estará executando localmente e já poderá receber requisições.
@@ -96,12 +96,12 @@ Retornará um JSON contendo uma lista de todas as salas:
 }
 ```
 
-### Criando e editando salas
+#### Criando e editando salas
 
 Para criar uma sala basta enviar um método POST com um json contendo o `nome` da sala e sua `capacidade`:
 
 ```bash
-# http --json --form POST localhost:5000/api/sala/ nome="Knuth" capacidade=10 
+$ http --json --form POST localhost:5000/api/sala/ nome="Knuth" capacidade=10 
 ```
 
 Irá retornar uma confirmação com o ID da nova sala:
@@ -115,7 +115,7 @@ Irá retornar uma confirmação com o ID da nova sala:
 Para alterar a sala, basta enviar para `api/sala/ID` um PUT contendo as informações da sala:
 
 ```bash
-http --json --form PUT localhost:5000/api/sala/3192ba04e08011e8b7ca1c394760687f nome="Knuth" capacidade=30
+$ http --json --form PUT localhost:5000/api/sala/3192ba04e08011e8b7ca1c394760687f nome="Knuth" capacidade=30
 ```
 
 JSON:
@@ -128,7 +128,7 @@ JSON:
 Para excluir, basta enviar DELETE para `api/sala/ID`:
 
 ```bash
-http --json --form DELETE localhost:5000/api/sala/3192ba04e08011e8b7ca1c394760687f
+$ http --json --form DELETE localhost:5000/api/sala/3192ba04e08011e8b7ca1c394760687f
 ```
 
 JSON:
@@ -138,4 +138,114 @@ JSON:
 }
 ```
 
-Obs: A exclusão de salas ocorre de maneira lógica para que não ocorram agendamentos sem sala.
+**Obs: A exclusão de salas ocorre de maneira lógica para que não ocorram agendamentos sem sala.**
+
+## Agendamentos
+
+Para acessar o recurso de agendamentos é necessário `localhost:5000/api/agendamento/`.
+
+#### Recuperando agendamentos
+
+Para recuperar os agendamentos é necessário enviar um get para o recurso:
+
+```bash
+$ http --form GET localhost:5000/api/agendamento/
+```
+
+JSON:
+```json
+{
+    "agendamentos": [
+        {
+            "_id": "46a1e0e3e11711e8b7ca1c394760687f",
+            "fim": "2018-12-02T08:10:00",
+            "inicio": "2018-12-02T08:00:00",
+            "sala_id": "46a1e0e1e11711e8b7ca1c394760687f",
+            "titulo": "Fechamento mensal"
+        },
+        {
+            "_id": "46a1e0e4e11711e8b7ca1c394760687f",
+            "fim": "2018-12-02T08:10:00",
+            "inicio": "2018-12-02T08:00:00",
+            "sala_id": "46a1e0e0e11711e8b7ca1c394760687f",
+            "titulo": "Weekly meeting"
+        }
+    ]
+}
+```
+
+Para recuperar informações de um agendamento específico, basta solicitar pelo seu ID:
+
+```bash
+$ http --form GET localhost:5000/api/agendamento/46a1e0e3e11711e8b7ca1c394760687f
+```
+
+JSON:
+```json
+{
+    "_id": "46a1e0e3e11711e8b7ca1c394760687f",
+    "fim": "2018-12-02T08:10:00",
+    "inicio": "2018-12-02T08:00:00",
+    "sala_id": "46a1e0e1e11711e8b7ca1c394760687f",
+    "titulo": "Fechamento mensal"
+}
+```
+
+#### Criando e editando agendamento
+
+Para criar um agendamento basta submeter um POST para o recurso, com as informações de `titulo`, `inicio`, `fim` e o `sala_id`. Lembrando que inicio e fim deve seguir o seguinte formato `%Y-%m-%dT%H:%M:%S`:
+
+```bash
+$ http --json --form POST localhost:5000/api/agendamento/ titulo="Festa de Fim de Ano" inicio="2018-12-20T18:00:00" fim="2018-12-20T22:00:00" sala_id="46a1e0e1e11711e8b7ca1c394760687f"
+```
+
+Retornará o ID da reunião criada:
+
+```json
+{
+    "agendamento criado": "7eabf5d2e11911e8b7ca1c394760687f"
+}
+```
+
+Caso tente incluir um agendamento na mesma sala e horário, será apresentado um erro:
+
+```bash
+$ http --json --form POST localhost:5000/api/agendamento/ titulo="Limpeza de carpete" inicio="2018-12-20T20:00:00" fim="2018-12-20T22:00:00" sala_id="46a1e0e1e11711e8b7ca1c394760687f"
+```
+Retorno:
+
+```json
+{
+    "Agendamento inválido": "Ja existe reuniao para esta sala neste horario"
+}
+```
+
+Para atualizar, basta enviar as alterações via PUT para o recurso desejado:
+
+```bash
+$ http --json --form PUT localhost:5000/api/agendamento/7eabf5d2e11911e8b7ca1c394760687f titulo="Limpeza de carpete" inicio="2018-12-20T18:00:00" fim="2018-12-20T22:00:00" sala_id="46a1e0e1e11711e8b7ca1c394760687f"
+```
+
+Retornando a confirmação:
+
+```json
+{
+    "agendamento atualizado": "7eabf5d2e11911e8b7ca1c394760687f"
+}
+```
+
+Para remover, basta enviar o delete para o recurso:
+
+```bash
+$ http --form DELETE localhost:5000/api/agendamento/7eabf5d2e11911e8b7ca1c394760687f
+```
+
+Retornando a confirmação:
+
+```json
+{
+    "agendamento excluido": "7eabf5d2e11911e8b7ca1c394760687f"
+}
+```
+
+O agendamento será excluído definitivamente.
