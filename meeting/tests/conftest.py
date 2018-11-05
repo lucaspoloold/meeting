@@ -15,8 +15,8 @@ def app():
     agendamento = {
         'titulo': 'Daily meeting',
         'sala_id': sala.inserted_id,
-        'inicio': '2018-12-01 08:00:00',
-        'fim': '2018-12-01 08:10:00',
+        'inicio': '2018-12-01T08:00:00',
+        'fim': '2018-12-01T08:10:00',
     }
 
     app_obj.db['agendamentos'].insert_one(agendamento)
@@ -24,8 +24,8 @@ def app():
     agendamento = {
         'titulo': 'Fechamento mensal',
         'sala_id': sala.inserted_id,
-        'inicio': '2018-12-02 08:00:00',
-        'fim': '2018-12-02 08:10:00',
+        'inicio': '2018-12-02T08:00:00',
+        'fim': '2018-12-02T08:10:00',
     }
 
     app_obj.db['agendamentos'].insert_one(agendamento)
