@@ -75,3 +75,18 @@ def test_atualizar_agendamento_em_horario_ocupado(app):
     with app.test_client() as client:
         agendamento_atualizado = client.put(f"api/agendamento/{agendamento['_id']}", json=agendamento)
         assert agendamento_atualizado.status_code == 409
+
+
+def test_inserir_agendamento_com_data_invalida(app):
+    sala = app.db['salas'].find_one({"ativa": True})
+    agendamento = {
+        'titulo': 'Weekly meeting',
+        'sala_id': sala['_id'],
+        'inicio': '2018-12- 08:00:00',
+        'fim': '2018-12-02 08:10:00',
+    }
+
+    with app.test_client() as client:
+        novo_agendamento = client.post('api/agendamento/', json=agendamento)
+        assert novo_agendamento.status_code == 409
+        assert "invalido" in novo_agendamento.json['Agendamento inválido']
