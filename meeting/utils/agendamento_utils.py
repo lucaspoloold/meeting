@@ -17,12 +17,12 @@ def valida_sala_livre(db, sala_id, horario, agendamento_id):
 
 
 def valida_datas(agendamento):
-    dateformat = "%Y-%m-%d %H:%M:%S"
+    dateformat = "%Y-%m-%dT%H:%M:%S"
     try:
         datetime.strptime(agendamento['inicio'], dateformat)
         datetime.strptime(agendamento['fim'], dateformat)
     except Exception:
-        raise Exception("Formato de data/hora invalido (%Y-%m-%d %H:%M:%S), confira inicio e fim")
+        raise Exception("Formato de data/hora invalido (%Y-%m-%dT%H:%M:%S), confira inicio e fim")
 
 
 def valida_agendamento(db, agendamento, agendamento_id=""):
