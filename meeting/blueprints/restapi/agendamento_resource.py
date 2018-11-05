@@ -27,3 +27,19 @@ class AgendamentoList(Resource):
             agendamento_novo = app.db['agendamentos'].insert(agendamento)
             app.logger.info(f"Agendamento {agendamento} criado com sucesso: {agendamento_novo.inserted_id}")
             return {"agendamento criado": agendamento_novo.inserted_id}, 201
+
+
+class Agendamento(Resource):
+
+    def put(self, agendamento_id):
+        agendamento = agendamento_post_parser.parse_args()
+
+        try:
+            valida_agendamento(app.db, agendamento, agendamento_id)
+        except Exception as e:
+            app.logger.info(f"Agendamento inválido: {e} - Request {agendamento}")
+            return {"Agendamento inválido": str(e)}, 409
+        else:
+            app.db['agendamentos'].update_one({'_id': agendamento_id}, {'$set': agendamento})
+            app.logger.info(f"Agendamento {agendamento_id} atualizada para {agendamento}")
+            return {'agendamento atualizado': agendamento_id}, 200

@@ -21,6 +21,15 @@ def app():
 
     app_obj.db['agendamentos'].insert_one(agendamento)
 
+    agendamento = {
+        'titulo': 'Fechamento mensal',
+        'sala_id': sala.inserted_id,
+        'inicio': '2018-12-02 08:00:00',
+        'fim': '2018-12-02 08:10:00',
+    }
+
+    app_obj.db['agendamentos'].insert_one(agendamento)
+
     yield app_obj
 
     # app_obj.db['salas'].delete_many({})
