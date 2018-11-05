@@ -31,6 +31,13 @@ class AgendamentoList(Resource):
 
 class Agendamento(Resource):
 
+    def get(self, agendamento_id):
+        agendamento = app.db['agendamentos'].find_one({"_id": agendamento_id})
+        if agendamento:
+            return agendamento, 200
+        else:
+            return "Registro nao encontrado", 404
+
     def put(self, agendamento_id):
         agendamento = agendamento_post_parser.parse_args()
 
@@ -43,3 +50,8 @@ class Agendamento(Resource):
             app.db['agendamentos'].update_one({'_id': agendamento_id}, {'$set': agendamento})
             app.logger.info(f"Agendamento {agendamento_id} atualizada para {agendamento}")
             return {'agendamento atualizado': agendamento_id}, 200
+
+    def delete(self, agendamento_id):
+        app.db['agendamentos'].delete_one({'_id': agendamento_id})
+        app.logger.info(f"Agendamento {agendamento_id} excluido")
+        return {'agendamento excluido': agendamento_id}, 200
